@@ -6,4 +6,4 @@
 
 ---
 
-### [LIVE DEMO ON STACK BLITZ](https://iq-air-map.stackblitz.io)
+### [LIVE DEMO ON STACK BLITZ](https://stackblitz.com/edit/iq-air-map?file=src/index.js)
