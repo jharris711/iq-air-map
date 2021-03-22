@@ -15,8 +15,7 @@ const stateGeodataReducer = ( state = initialState, action ) => {
         getStateGeoDataLoading: true,
       }
     case types.GET_STATE_GEODATA_SUCCESS:
-      const data = action.payload.data
-      const state_geodata = data
+      const state_geodata = action.payload.data
       console.log(state_geodata)
       return {
         ...state,

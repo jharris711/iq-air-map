@@ -3,48 +3,46 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  makeStyles,
   Divider,
   Grid,
   Paper,
   Typography,
-  Menu,
   MenuItem,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  PinDropIcon,
-  CircularProgress,
-  Button,
   TextField,
 } from '@material-ui/core';
 
 import { useSnackbar } from 'notistack';
 
 import {
-  getCountries,
   selectCountry,
   selectState,
+  selectCity,
+  getCountries,
   getGeoData,
   getStates,
   getStateGeoData,
+  getCities,
+  getCityGeodata,
 } from '../../redux';
 
 import { paperStyles } from './styles';
 
 const InfoColumn = ({
-  geoData,
   countries,
   states,
+  cities,
   selected_country,
   selected_state,
+  selected_city,
   getGeoData,
   getStateGeoData,
+  getCityGeodata,
   getCountries,
   getStates,
+  getCities,
   selectCountry,
   selectState,
+  selectCity,
 }) => {
   const paperClasses = paperStyles();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
@@ -61,13 +59,14 @@ const InfoColumn = ({
   }, [selected_country, getGeoData, getStates]);
 
   useEffect(() => {
-    console.log(selected_state);
     getStateGeoData(selected_state);
-  }, [selected_state, getStateGeoData]);
+    getCities(selected_state, selected_country);
+  }, [selected_state, getStateGeoData, getCities]);
 
   useEffect(() => {
-    console.log(states);
-  }, [states]);
+    console.log(selected_city);
+    getCityGeodata(selected_city, selected_state, selected_country);
+  }, [selected_city, getCityGeodata]);
 
   const handleSelectCountry = (event) => {
     const countryToSelect = event.target.value;
@@ -77,6 +76,11 @@ const InfoColumn = ({
   const handleSelectState = (event) => {
     const stateToSelect = event.target.value;
     selectState(stateToSelect);
+  };
+
+  const handleSelectCity = (event) => {
+    const cityToSelect = event.target.value;
+    selectCity(cityToSelect);
   };
 
   return (
@@ -174,6 +178,38 @@ const InfoColumn = ({
             </TextField>
           </div>
         </Grid>
+        <Grid item xs={12}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <TextField
+              id="filled-select-city"
+              select
+              value={selected_city}
+              onChange={handleSelectCity}
+              helperText="Please select a city"
+              variant="outlined"
+              margin="dense"
+              disabled={Array.isArray(cities) && cities.length ? false : true}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {Array.from(cities).map((city) => {
+                // console.log(country);
+                return (
+                  <MenuItem key={`${city}-key`} value={city}>
+                    {city}
+                  </MenuItem>
+                );
+              })}
+            </TextField>
+          </div>
+        </Grid>
       </Paper>
     </>
   );
@@ -181,11 +217,12 @@ const InfoColumn = ({
 
 const mapStateToProps = (state) => {
   return {
-    geodata: state.geodata.geodata,
     countries: state.countries.countries,
     states: state.states.states,
+    cities: state.cities.cities,
     selected_country: state.countries.selected_country,
     selected_state: state.states.selected_state,
+    selected_city: state.cities.selected_city,
   };
 };
 
@@ -193,10 +230,14 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getGeoData: (country) => dispatch(getGeoData(country)),
     getStateGeoData: (state) => dispatch(getStateGeoData(state)),
+    getCityGeodata: (city, state, country) =>
+      dispatch(getCityGeodata(city, state, country)),
     getCountries: () => dispatch(getCountries()),
     getStates: (country) => dispatch(getStates(country)),
+    getCities: (state, country) => dispatch(getCities(state, country)),
     selectCountry: (country) => dispatch(selectCountry(country)),
     selectState: (state) => dispatch(selectState(state)),
+    selectCity: (city) => dispatch(selectCity(city)),
   };
 };
 

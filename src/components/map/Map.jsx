@@ -21,14 +21,14 @@ const maps = {
   light: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 };
 
-const Map = ({ geodata, state_geodata }) => {
+const Map = ({ geodata, state_geodata, city_geodata }) => {
   const [map, setMap] = useState(null);
   const [countryFillOpacity, setCountryFillOpacity] = useState(0.0);
   const [stateFillOpacity, setStateFillOpacity] = useState(0.0);
 
   useEffect(() => {
-    console.log('geodata', geodata);
-  }, [geodata]);
+    console.log('city data', city_geodata);
+  }, [city_geodata]);
 
   const onGeoJsonMouseEvent = (event, type) => {
     switch (type) {
@@ -144,6 +144,39 @@ const Map = ({ geodata, state_geodata }) => {
               })}
             </LayerGroup>
           </LayersControl.Overlay>
+          <LayersControl.Overlay name="City Borders" checked>
+            <LayerGroup>
+              {Array.from(city_geodata).map((city) => {
+                return (
+                  <>
+                    <GeoJSON
+                      key={`${city.display_name}-stategeojson`}
+                      data={city.geojson}
+                      pathOptions={{
+                        color: '#757de8',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.5,
+                      }}
+                    />
+                    <Marker
+                      key={`${city.display_name}-statemarker`}
+                      position={[city.lat, city.lon]}
+                      eventHandlers={{
+                        add: () => map.flyTo([city.lat, city.lon], 12),
+                      }}
+                    >
+                      <Popup key={`${city.display_name}--statepopup`}>
+                        <Typography variant="h6" align="center">
+                          {city.display_name}
+                        </Typography>
+                      </Popup>
+                    </Marker>
+                  </>
+                );
+              })}
+            </LayerGroup>
+          </LayersControl.Overlay>
         </LayersControl>
       </MapContainer>
     </>
@@ -154,6 +187,7 @@ const mapStateToProps = (state) => {
   return {
     geodata: state.geodata.geodata,
     state_geodata: state.stateGeodata.state_geodata,
+    city_geodata: state.cityGeodata.city_geodata,
   };
 };
 
