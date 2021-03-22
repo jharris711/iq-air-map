@@ -11,8 +11,6 @@ import {
   LayerGroup,
   ZoomControl,
   GeoJSON,
-  MapConsumer,
-  useMapEvents,
 } from 'react-leaflet';
 
 import { Typography } from '@material-ui/core';
@@ -24,11 +22,6 @@ const maps = {
 const Map = ({ geodata, state_geodata, city_geodata }) => {
   const [map, setMap] = useState(null);
   const [countryFillOpacity, setCountryFillOpacity] = useState(0.0);
-  const [stateFillOpacity, setStateFillOpacity] = useState(0.0);
-
-  useEffect(() => {
-    console.log('city data', city_geodata);
-  }, [city_geodata]);
 
   const onGeoJsonMouseEvent = (event, type) => {
     switch (type) {
@@ -37,18 +30,6 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
         break;
       case 'out':
         setCountryFillOpacity(0.0);
-        break;
-      default:
-        break;
-    }
-  };
-  const onStateGeoJsonMouseEvent = (event, type) => {
-    switch (type) {
-      case 'over':
-        setStateFillOpacity(0.5);
-        break;
-      case 'out':
-        setStateFillOpacity(0.0);
         break;
       default:
         break;
@@ -71,7 +52,7 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
               url={maps.light}
             />
           </LayersControl.BaseLayer>
-          <LayersControl.Overlay name="Country Borders" checked>
+          <LayersControl.Overlay name="Country" checked>
             <LayerGroup>
               {Array.from(geodata).map((data) => {
                 return (
@@ -110,14 +91,14 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
               })}
             </LayerGroup>
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="State Borders" checked>
+          <LayersControl.Overlay name="State" checked>
             <LayerGroup>
-              {Array.from(state_geodata).map((state_data) => {
+              {Array.from(state_geodata).map((state) => {
                 return (
                   <>
                     <GeoJSON
-                      key={`${state_data.display_name}-stategeojson`}
-                      data={state_data.geojson}
+                      key={`${state.display_name}-stategeojson`}
+                      data={state.geojson}
                       pathOptions={{
                         color: '#ff7961',
                         weight: 2,
@@ -126,16 +107,15 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
                       }}
                     />
                     <Marker
-                      key={`${state_data.display_name}-statemarker`}
-                      position={[state_data.lat, state_data.lon]}
+                      key={`${state.display_name}-statemarker`}
+                      position={[state.lat, state.lon]}
                       eventHandlers={{
-                        add: () =>
-                          map.flyTo([state_data.lat, state_data.lon], 7),
+                        add: () => map.flyTo([state.lat, state.lon], 7),
                       }}
                     >
-                      <Popup key={`${state_data.display_name}--statepopup`}>
+                      <Popup key={`${state.display_name}--statepopup`}>
                         <Typography variant="h6" align="center">
-                          {state_data.display_name}
+                          {state.display_name}
                         </Typography>
                       </Popup>
                     </Marker>
@@ -144,13 +124,13 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
               })}
             </LayerGroup>
           </LayersControl.Overlay>
-          <LayersControl.Overlay name="City Borders" checked>
+          <LayersControl.Overlay name="City" checked>
             <LayerGroup>
               {Array.from(city_geodata).map((city) => {
                 return (
                   <>
                     <GeoJSON
-                      key={`${city.display_name}-stategeojson`}
+                      key={`${city.display_name}-citygeojson`}
                       data={city.geojson}
                       pathOptions={{
                         color: '#757de8',
@@ -160,13 +140,13 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
                       }}
                     />
                     <Marker
-                      key={`${city.display_name}-statemarker`}
+                      key={`${city.display_name}-citymarker`}
                       position={[city.lat, city.lon]}
                       eventHandlers={{
                         add: () => map.flyTo([city.lat, city.lon], 12),
                       }}
                     >
-                      <Popup key={`${city.display_name}--statepopup`}>
+                      <Popup key={`${city.display_name}-citypopup`}>
                         <Typography variant="h6" align="center">
                           {city.display_name}
                         </Typography>
@@ -178,6 +158,7 @@ const Map = ({ geodata, state_geodata, city_geodata }) => {
             </LayerGroup>
           </LayersControl.Overlay>
         </LayersControl>
+        <ZoomControl position="topright" />
       </MapContainer>
     </>
   );

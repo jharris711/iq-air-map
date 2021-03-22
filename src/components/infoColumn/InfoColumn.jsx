@@ -64,7 +64,6 @@ const InfoColumn = ({
   }, [selected_state, getStateGeoData, getCities]);
 
   useEffect(() => {
-    console.log(selected_city);
     getCityGeodata(selected_city, selected_state, selected_country);
   }, [selected_city, getCityGeodata]);
 
