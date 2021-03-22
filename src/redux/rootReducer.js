@@ -1,13 +1,15 @@
 import { combineReducers } from "redux";
 
 import countriesReducer from "./reducers/countriesReducer";
-import geoDataReducer from "./reducers/geoDataReducer";
+import geodataReducer from "./reducers/geodataReducer";
+import stateGeodataReducer from "./reducers/stateGeodataReducer";
 import statesReducer from "./reducers/statesReducer";
 
 const rootReducer = combineReducers({
   countries: countriesReducer,
-  geoData: geoDataReducer,
+  geodata: geodataReducer,
   states: statesReducer,
+  stateGeodata: stateGeodataReducer,
 });
 
 export default rootReducer;

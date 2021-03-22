@@ -21,23 +21,34 @@ const maps = {
   light: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
 };
 
-const Map = ({ geoData, selected_country }) => {
+const Map = ({ geodata, state_geodata }) => {
   const [map, setMap] = useState(null);
-  const [fillOpacity, setFillOpacity] = useState(0.0);
-
-  const mapRef = useRef(null);
+  const [countryFillOpacity, setCountryFillOpacity] = useState(0.0);
+  const [stateFillOpacity, setStateFillOpacity] = useState(0.0);
 
   useEffect(() => {
-    console.log('geoData', geoData);
-  }, [geoData]);
+    console.log('geodata', geodata);
+  }, [geodata]);
 
   const onGeoJsonMouseEvent = (event, type) => {
     switch (type) {
       case 'over':
-        setFillOpacity(0.5);
+        setCountryFillOpacity(0.5);
         break;
       case 'out':
-        setFillOpacity(0.0);
+        setCountryFillOpacity(0.0);
+        break;
+      default:
+        break;
+    }
+  };
+  const onStateGeoJsonMouseEvent = (event, type) => {
+    switch (type) {
+      case 'over':
+        setStateFillOpacity(0.5);
+        break;
+      case 'out':
+        setStateFillOpacity(0.0);
         break;
       default:
         break;
@@ -62,7 +73,7 @@ const Map = ({ geoData, selected_country }) => {
           </LayersControl.BaseLayer>
           <LayersControl.Overlay name="Country Borders" checked>
             <LayerGroup>
-              {Array.from(geoData).map((data) => {
+              {Array.from(geodata).map((data) => {
                 return (
                   <>
                     <GeoJSON
@@ -72,7 +83,7 @@ const Map = ({ geoData, selected_country }) => {
                         color: '#757de8',
                         weight: 2,
                         opacity: 1,
-                        fillOpacity,
+                        fillOpacity: countryFillOpacity,
                       }}
                       eventHandlers={{
                         mouseover: (event, type) =>
@@ -99,6 +110,40 @@ const Map = ({ geoData, selected_country }) => {
               })}
             </LayerGroup>
           </LayersControl.Overlay>
+          <LayersControl.Overlay name="State Borders" checked>
+            <LayerGroup>
+              {Array.from(state_geodata).map((state_data) => {
+                return (
+                  <>
+                    <GeoJSON
+                      key={`${state_data.display_name}-stategeojson`}
+                      data={state_data.geojson}
+                      pathOptions={{
+                        color: '#ff7961',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.5,
+                      }}
+                    />
+                    <Marker
+                      key={`${state_data.display_name}-statemarker`}
+                      position={[state_data.lat, state_data.lon]}
+                      eventHandlers={{
+                        add: () =>
+                          map.flyTo([state_data.lat, state_data.lon], 7),
+                      }}
+                    >
+                      <Popup key={`${state_data.display_name}--statepopup`}>
+                        <Typography variant="h6" align="center">
+                          {state_data.display_name}
+                        </Typography>
+                      </Popup>
+                    </Marker>
+                  </>
+                );
+              })}
+            </LayerGroup>
+          </LayersControl.Overlay>
         </LayersControl>
       </MapContainer>
     </>
@@ -107,8 +152,8 @@ const Map = ({ geoData, selected_country }) => {
 
 const mapStateToProps = (state) => {
   return {
-    geoData: state.geoData.geoData,
-    selected_country: state.countries.selected_country,
+    geodata: state.geodata.geodata,
+    state_geodata: state.stateGeodata.state_geodata,
   };
 };
 

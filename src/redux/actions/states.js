@@ -1,6 +1,9 @@
 import axios from 'axios'
 import types from './types'
 
+const key1 = "0d671390-63d9-4cde-8f1c-45f9124045f8"
+const key2 = "b509785d-740f-41ba-a74c-f5790e333194"
+
 const getStatesRequest = () => {
   return {
     type: types.GET_STATES_REQUEST
@@ -27,7 +30,7 @@ export const getStates = country => {
     axios.get("http://api.airvisual.com/v2/states", {
       params: {
         country,
-        key: "0d671390-63d9-4cde-8f1c-45f9124045f8"
+        key: key2
       }
     })
       .then(response => {

@@ -13,7 +13,7 @@ export const paperStyles = makeStyles(theme => ({
   root: {
     zIndex: 999,
     position: "absolute",
-    width: "23vw",
+    width: "20vw",
     top: "10px",
     left: "10px",
     minHeight: "98vh",

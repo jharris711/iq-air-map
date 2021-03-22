@@ -28,6 +28,7 @@ import {
   selectState,
   getGeoData,
   getStates,
+  getStateGeoData,
 } from '../../redux';
 
 import { paperStyles } from './styles';
@@ -39,6 +40,7 @@ const InfoColumn = ({
   selected_country,
   selected_state,
   getGeoData,
+  getStateGeoData,
   getCountries,
   getStates,
   selectCountry,
@@ -56,7 +58,12 @@ const InfoColumn = ({
       getGeoData(selected_country);
       getStates(selected_country);
     }
-  }, [selected_country]);
+  }, [selected_country, getGeoData, getStates]);
+
+  useEffect(() => {
+    console.log(selected_state);
+    getStateGeoData(selected_state);
+  }, [selected_state, getStateGeoData]);
 
   useEffect(() => {
     console.log(states);
@@ -174,7 +181,7 @@ const InfoColumn = ({
 
 const mapStateToProps = (state) => {
   return {
-    geoData: state.geoData.geoData,
+    geodata: state.geodata.geodata,
     countries: state.countries.countries,
     states: state.states.states,
     selected_country: state.countries.selected_country,
@@ -185,6 +192,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getGeoData: (country) => dispatch(getGeoData(country)),
+    getStateGeoData: (state) => dispatch(getStateGeoData(state)),
     getCountries: () => dispatch(getCountries()),
     getStates: (country) => dispatch(getStates(country)),
     selectCountry: (country) => dispatch(selectCountry(country)),
