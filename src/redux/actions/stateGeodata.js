@@ -23,13 +23,14 @@ const getStateGeoDataFailure = payload => {
   }
 }
 
-export const getStateGeoData = state => {
+export const getStateGeoData = (state, country) => {
   return dispatch => {
     dispatch(getStateGeoDataRequest())
     const url = "https://nominatim.openstreetmap.org/search"
     axios.get(url, {
       params: {
         state,
+        country,
         polygon_geojson: 1,
         format: "json"
       }

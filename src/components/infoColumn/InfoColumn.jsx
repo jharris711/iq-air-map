@@ -59,7 +59,7 @@ const InfoColumn = ({
   }, [selected_country, getGeoData, getStates]);
 
   useEffect(() => {
-    getStateGeoData(selected_state);
+    getStateGeoData(selected_state, selected_country);
     getCities(selected_state, selected_country);
   }, [selected_state, getStateGeoData, getCities]);
 
@@ -228,7 +228,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getGeoData: (country) => dispatch(getGeoData(country)),
-    getStateGeoData: (state) => dispatch(getStateGeoData(state)),
+    getStateGeoData: (state, country) =>
+      dispatch(getStateGeoData(state, country)),
     getCityGeodata: (city, state, country) =>
       dispatch(getCityGeodata(city, state, country)),
     getCountries: () => dispatch(getCountries()),
